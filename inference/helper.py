@@ -6,6 +6,7 @@ import numpy as np
 
 
 def process_all_weights(num_sites_file, weights_dir):
+    print(f'Processing all chromosme calculated scores ...')
     sitesPerChrom = {}
     totalSites = 0
     with open(num_sites_file, 'r') as f:
@@ -61,6 +62,7 @@ def process_all_weights(num_sites_file, weights_dir):
 
 
 def calculate_proportions(all_chr_ancestry_normed):
+    print('Calculating proportions...')
     fh = open(all_chr_ancestry_normed, 'r')
     ancestry_scores = json.load(fh)
     ref_populations = []
@@ -68,7 +70,6 @@ def calculate_proportions(all_chr_ancestry_normed):
         ref_populations = list(ancestry_scores[k].keys())
         break
 
-    print("Total ref populatinos = ", len(ref_populations))
     fw = open('./estimated-ancestry-proportions', 'w')
     fw.write("Sample")  
     for rp in ref_populations:
@@ -89,3 +90,4 @@ def calculate_proportions(all_chr_ancestry_normed):
 
         fw.write("\n")
     fw.close()
+    print('Done!!!\nProportions outputted to file : estimated-ancestry-proportions', flush=True)
