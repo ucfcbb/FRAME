@@ -18,6 +18,7 @@ def main():
     numSiteFile = args.n
     chrom_num = args.c
 
+    # calculate weights per chrom
     chromosome = Chrom.Chrom(ref_popln_file, query_sample_file, output_folder, 
                         numSiteFile, chrom_num)
     chromosome.process_all_matches(input_ibd_file)
