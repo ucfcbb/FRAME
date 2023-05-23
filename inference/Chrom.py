@@ -17,14 +17,13 @@ class Chrom:
     samples_per_ref_ancestry_d = collections.defaultdict(lambda: 0)
     num_sites_per_chrom = collections.defaultdict()
 
-    def __init__(self, chrom_IBD_file, output_folder, ref_popln_file, numSiteFile, chrom_num):
+    def __init__(self, ref_popln_file, query_sample_file, output_folder,  numSiteFile, chrom_num):
         self.chrom_num = chrom_num
-        print(f"------------- Initializing {self.chrom_num} -----------",
+        print(f"---------- Initializing CHR {self.chrom_num} -----------",
               flush=True)
 
         # Load haplotype to Individual mapping for query & ref. samples
-        #self.haps2indivs_query = self.get_query_indivs()
-        self.haps2indivs_ref, self.uniq_indivs = self.get_indivs_ref(ref_popln_file)
+        self.query_samples = self.get_query_samples(query_sample_file)
 
         # loading meta information
         self.get_num_sites_per_chrom(numSiteFile)
@@ -58,65 +57,30 @@ class Chrom:
                 toks = line.strip().split()
                 Chrom.num_sites_per_chrom[toks[0]] = int(toks[1])
 
-    def get_query_hap_idx(self, input_file):
-        '''
-            returns the query haplotype's index
-        '''
-        return input_file.split('_')[-1]
-
-    def get_query_indivs(self, ):
+    def get_query_samples(self, query_sample_file):
         '''
             returns the mapping of query haplotype index to query individual id
         '''
-        hap_indices = {}
-        hap_id = 0
-        prefix = 'indivs-list'
-        with open(prefix, 'r') as f:
+        query_samples = []
+        with open(query_sample_file, 'r') as f:
             for line in f:
                 toks = line.rstrip().split()
-                hap_indices[str(hap_id)] = toks[0]
-                hap_id += 1
-        return hap_indices
+                idd = toks[0]
+                query_samples.append(idd+'-0')
+                query_samples.append(idd+'-1')
+        return query_samples
 
-    def get_indivs_ref(self, ref_file):
-        '''
-            Make dictionary:
-             key=ref-hap-idx, value= sample + '-0/1'
-        '''
-        haps2indivs_ref = {}
-        uniq_indivs = set()
-        with open(ref_file, 'r') as f:
-            for line in f:
-                if line.startswith('##'):
-                    continue
-                elif line.startswith('#CHROM'):
-                    toks = line.rstrip().split()[9:]
-                    hap_id = 1
-                    for t in toks:
-                        haps2indivs_ref[str(hap_id)] = t + '-0'
-                        haps2indivs_ref[str(hap_id + 1)] = t + '-1'
-                        hap_id += 2
-                        uniq_indivs.add(t)
-                    break
-        return haps2indivs_ref, uniq_indivs
-
-    def load_all_required_meta_info(self, ref_meta_file, delim="\t"):
+    def load_all_required_meta_info(self, ref_popln_file, delim="\t"):
         print("Loading reference popuation...", flush=True)
         idx = 0
-        with open(ref_meta_file, 'r') as f:
+        with open(ref_popln_file, 'r') as f:
             for line in f:
                 if line.startswith('Sample'):
                     continue
                 toks = line.rstrip().split(delim)
                 sample_id = toks[0]
                 population = toks[1]
-
-                if sample_id not in self.uniq_indivs:
-                    continue
-
                 Chrom.ref_ancestry_of_sample_d[sample_id] = population
-
-                # store # of samples per ref_popln
                 Chrom.samples_per_ref_ancestry_d[population] += 1
 
                 # assign some arbritrary index for each ref-popln
@@ -127,47 +91,56 @@ class Chrom:
 
     def process_all_matches(self, chrom_IBD_file):
         ''' 
-            Process all the matching segments for a chromosome (w/o batching)
+            Process all the matching segments for a chromosome
         '''
-
         # create the interm output file
         fw_interm = open(self.interm_output_path, 'w')
 
-        # iterate through all match files
-        interim_res = {}
-        normalized_weights = {}
-        #query_hap_idx = self.get_query_hap_idx(chrom_IBD_file)
-        #query_hap_id = self.haps2indivs_query[query_hap_idx]
+        # initialize interim_res
+        interim_res = collections.OrderedDict()
+        for qs in self.query_samples:
+            interim_res[qs] = collections.OrderedDict()
+            for ra in self.ref_ancestries:
+                interim_res[qs][ra] = 0.0
 
-        # Update #hits per site
-        min_site = -1
-        max_site = -1
+        # Update #hits per query haplotype
+        prev_query_sample = ''
         with open(chrom_IBD_file, 'r') as f:
             for line in f:
                 toks = line.rstrip().split()
-                query_sample, query_hap_id = toks[0].split("-")
+                query_sample = toks[0]
                 ref_sample, ref_hap_id = toks[1].split("-")
                 start_site = int(toks[2])
                 end_site = int(toks[3])  # exclusive
 
-                if min_site < 0:
-                    if start_site > min_site:
-                        min_site = start_site
-                else:
-                    if start_site < min_site:
-                        min_site = start_site
+                if prev_query_sample == '':
+                    prev_query_sample = query_sample
+                elif prev_query_sample != query_sample:
+                    # process weights
+                    total_per_site = np.sum(Chrom.scores_matrix, axis=1)
+                    for j in range(self.total_num_uniq_ref_ancestries):
+                        ref_ancestry_scores_across_sites = Chrom.scores_matrix[:, j]
+                        weights = np.sum(
+                            np.divide(ref_ancestry_scores_across_sites,
+                                        total_per_site,
+                                        out=np.zeros_like(ref_ancestry_scores_across_sites),
+                                        where=total_per_site != 0) /
+                            Chrom.samples_per_ref_ancestry_d[self.ref_ancestries[j]])
 
-                if end_site > max_site:
-                    max_site = end_site
-
-                #hit_ref_hap_idx = self.haps2indivs_ref[ref_hap_idx]
-                #hit_ref_hap_sample = hit_ref_hap_idx[:-2]
-
-                array_idx_ref_ancestry = Chrom.idx_of_ref_ancestry_d[ref_sample]
+                        # add each haplotype's weights
+                        interim_res[prev_query_sample][self.ref_ancestries[j]] = weights
+                    
+                    # reset the scores for next query match evaluation
+                    Chrom.scores_matrix.fill(0)
+                    prev_query_sample = query_sample
+                    
+                # update for the current query haplotype
+                array_idx_ref_ancestry = Chrom.idx_of_ref_ancestry_d[Chrom.ref_ancestry_of_sample_d[ref_sample]]
                 Chrom.scores_matrix[start_site:end_site,
                                         array_idx_ref_ancestry] += 1
-
-        # process weights
+            
+        # handle for the boundary case
+        # last query sample(s) is(are) the same
         total_per_site = np.sum(Chrom.scores_matrix, axis=1)
         for j in range(self.total_num_uniq_ref_ancestries):
             ref_ancestry_scores_across_sites = Chrom.scores_matrix[:, j]
@@ -177,15 +150,7 @@ class Chrom:
                             out=np.zeros_like(ref_ancestry_scores_across_sites),
                             where=total_per_site != 0) /
                 Chrom.samples_per_ref_ancestry_d[self.ref_ancestries[j]])
-
-            normalized_weights[self.ref_ancestries[j]] = weights
-
-        # add each haplotype's weights
-        interim_res[query_hap_id] = normalized_weights.copy()
-
-        # reset the scores for next query match evaluation
-        Chrom.scores_matrix.fill(0)
-        normalized_weights.clear()
+        interim_res[query_sample] = weights
 
         print("Writing interim files...", flush=True)
         json.dump(interim_res, fw_interm, indent=4)
