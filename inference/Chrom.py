@@ -150,7 +150,7 @@ class Chrom:
                             out=np.zeros_like(ref_ancestry_scores_across_sites),
                             where=total_per_site != 0) /
                 Chrom.samples_per_ref_ancestry_d[self.ref_ancestries[j]])
-        interim_res[query_sample] = weights
+            interim_res[query_sample][self.ref_ancestries[j]] = weights
 
         print("Writing interim files...", flush=True)
         json.dump(interim_res, fw_interm, indent=4)

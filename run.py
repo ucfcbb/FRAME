@@ -18,7 +18,6 @@ def main():
     query_sample_file = args.q
     output_folder = args.o
     numSiteFile = args.n
-    chrom_num = args.c
 
     # calculate weights per chrom
     ibd_files = os.listdir(input_ibd_dir)
@@ -27,7 +26,7 @@ def main():
         input_ibd_file = os.path.join(input_ibd_dir, fl)
         assert os.path.exists(input_ibd_file)
         chromosome = Chrom.Chrom(ref_popln_file, query_sample_file, output_folder, 
-                            numSiteFile, chrom_num)
+                            numSiteFile, str(chrom_num))
         chromosome.process_all_matches(input_ibd_file)
 
     # process all weights
