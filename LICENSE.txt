@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2023 The University of Texas Health Science Center at Houston and The University of Central Florida
+Copyright (c) 2023 The University of Central Florida and The University of Texas Health Science Center at Houston
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
