@@ -714,6 +714,7 @@ int SyllableQuery<T>::query(const char* query_file, const char* output_file, con
 			kp1++;
 		}
 	}
+    out.close();
 
 	return 0;
 }

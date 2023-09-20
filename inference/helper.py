@@ -13,18 +13,18 @@ def process_all_weights(num_sites_file, weights_dir):
         for line in f:
             if 'Chr' in line:
                 continue
-            toks = line.rstrip().split("\t")
+            toks = line.rstrip().split()
             sitesPerChrom[toks[0]] = int(toks[1])
             totalSites += int(toks[1])
 
-    weight_files = os.listdir(weights_dir)
+    weight_files = [f for f in os.listdir(weights_dir) if 'json' in f]
     final_ancestry_normed = collections.OrderedDict()
 
     for weight_file in natsorted(weight_files):
         chrom_num = weight_file.split('-')[0]
-        print(f"Processing Chr {chrom_num}, num sites = {sitesPerChrom[chrom_num]}",
+        print(
+            f"Processing Chr {chrom_num}, num sites = {sitesPerChrom[chrom_num]}",
             flush=True)
-
         input_file_path = os.path.join(weights_dir, weight_file)
         fh = open(input_file_path)
         chrom_ancestry = json.load(fh)
@@ -55,13 +55,15 @@ def process_all_weights(num_sites_file, weights_dir):
     for k in final_ancestry_normed:
         d_descending[k] = dict(
             sorted(final_ancestry_normed[k].items(),
-                key=lambda item: item[1],
-                reverse=True))
-    with open('all-chr-ancestry-normed.json', 'w') as fp:
+                   key=lambda item: item[1],
+                   reverse=True))
+    print("Output to all-chr-anccestry-normed.json", flush=True)
+    with open(os.path.join(weights_dir, 'all-chr-ancestry-normed.json'),
+              'w') as fp:
         json.dump(d_descending, fp, indent=4)
 
 
-def calculate_proportions(all_chr_ancestry_normed):
+def calculate_proportions(all_chr_ancestry_normed, output_folder):
     print('Calculating proportions...')
     fh = open(all_chr_ancestry_normed, 'r')
     ancestry_scores = json.load(fh)
@@ -70,8 +72,9 @@ def calculate_proportions(all_chr_ancestry_normed):
         ref_populations = list(ancestry_scores[k].keys())
         break
 
-    fw = open('./estimated-ancestry-proportions', 'w')
-    fw.write("Sample")  
+    output_file = os.path.join(output_folder, 'Frame.prop')
+    fw = open(output_file, 'w')
+    fw.write("Sample")
     for rp in ref_populations:
         fw.write(f"\t{rp}")
     fw.write("\n")
@@ -90,4 +93,4 @@ def calculate_proportions(all_chr_ancestry_normed):
 
         fw.write("\n")
     fw.close()
-    print('Done!!!\nProportions outputted to file : estimated-ancestry-proportions', flush=True)
+    print(f'Done!!!\nProportions output to file : {output_file}', flush=True)
