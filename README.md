@@ -4,28 +4,40 @@ FRAME is a tool used to estimate global ancestry composition. It takes as an inp
 
 ## Installation ##
 
-Following are the prerequisites to install FRAME:
-`gcc`
+The tool was tested on a Linux system with following configuration:
+`gcc 9.4.0`
+`ubuntu 20.04.1`
 
 First, clone the git repository in a preferred directory on your local computer:
+
 `$git clone https://github.com/jikhashkya/FRAME.git'
+
 `$cd FRAME`
 
-It's best advised to run FRAME in a virtual environment using `conda`. To do so:
-`conda create -n FRAME`
-`conda activate FRAME`
-`conda install --yes --file requirements.txt`
-`bash build.sh`
+It's recommended to run FRAME in a virtual environment using `conda`. Create the virtual environment
+like so:
 
-Add the path to the build directory to the PYTHONPATH like so:
+`$conda create -n FRAME`
+
+`$conda activate FRAME`
+
+`$conda install --yes --file requirements.txt`
+
+`$bash build.sh`
+
+
+Add the path to the build directory to the `PYTHONPATH`:
 `export PYTHONPATH="${PYTHONPATH}":"/path/to/FRAME/build/"`
+
 This ensures that FRAME can be run from any directory.
 
-
 To test if the installation worked properly, run the following command:
-``
-The expected output is: 
-``
+
+```
+python run.py --h
+```
+
+A list of options required should be shown in the terminal.
 
 ## Sample Usage ##
 To run FRAME, you must provide the following parameters:
