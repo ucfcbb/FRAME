@@ -14,7 +14,7 @@ FRAME is a tool used to estimate global ancestry composition using IBDs (Identit
 To install the tool, first, clone the git repository in preferred directory on your local computer using the terminal:
 
 ```
-git clone https://github.com/jikhashkya/FRAME.git
+git clone https://github.com/ucfcbb/FRAME.git 
 cd FRAME
 ```
 
