@@ -22,9 +22,8 @@ It's recommended to run FRAME in a virtual environment using `conda`. Create the
 like shown below:
 
 ```
-conda create -n FRAME
+conda env create -n FRAME --file packages.yaml
 conda activate FRAME
-conda install --yes --file requirements.txt
 bash build.sh
 ```
 
