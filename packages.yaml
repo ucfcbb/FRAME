@@ -1,19 +1,27 @@
 name: FRAME
 channels:
   - anaconda
+  - conda-forge
   - defaults
 dependencies:
-  - _libgcc_mutex=0.1=main
-  - _openmp_mutex=5.1=1_gnu
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_gnu
+  - binutils_impl_linux-64=2.40=hf600244_0
   - blas=1.0=mkl
   - bzip2=1.0.8=h7b6447c_0
-  - ca-certificates=2023.01.10=h06a4308_0
+  - ca-certificates=2023.7.22=hbcca054_0
+  - certifi=2023.7.22=pyhd8ed1ab_0
+  - gcc=13.2.0=h574f8da_2
+  - gcc_impl_linux-64=13.2.0=h338b0a0_2
   - intel-openmp=2021.4.0=h06a4308_3561
-  - ld_impl_linux-64=2.38=h1181459_1
+  - kernel-headers_linux-64=2.6.32=he073ed8_16
+  - ld_impl_linux-64=2.40=h41732ed_0
   - libffi=3.4.2=h6a678d5_6
-  - libgcc-ng=11.2.0=h1234567_1
-  - libgomp=11.2.0=h1234567_1
-  - libstdcxx-ng=11.2.0=h1234567_1
+  - libgcc-devel_linux-64=13.2.0=ha9c7c90_2
+  - libgcc-ng=13.2.0=h807b86a_2
+  - libgomp=13.2.0=h807b86a_2
+  - libsanitizer=13.2.0=h7e041cc_2
+  - libstdcxx-ng=13.2.0=h7e041cc_2
   - libuuid=1.41.5=h5eee18b_0
   - mkl=2021.4.0=h06a4308_640
   - mkl_fft=1.3.1=py310hd6ae3a3_0
@@ -21,19 +29,18 @@ dependencies:
   - natsort=7.1.1=pyhd3eb1b0_0
   - ncurses=6.4=h6a678d5_0
   - numpy-base=1.23.5=py310h8e6c178_0
-  - openssl=1.1.1s=h7f8727e_0
+  - openssl=1.1.1w=hd590300_0
   - python=3.10.9=h7a1cb2a_0
   - readline=8.2=h5eee18b_0
   - six=1.16.0=pyhd3eb1b0_1
   - sqlite=3.40.1=h5082296_0
+  - sysroot_linux-64=2.12=he073ed8_16
   - tk=8.6.12=h1ccaba5_0
   - tzdata=2022a=hda174b7_0
   - wheel=0.37.1=pyhd3eb1b0_0
   - xz=5.2.10=h5eee18b_1
   - zlib=1.2.13=h5eee18b_0
-  - pip
   - pip:
-    - certifi==2022.12.7
     - mkl-fft==1.3.1
     - mkl-random==1.2.2
     - mkl-service==2.4.0
@@ -42,4 +49,3 @@ dependencies:
     - pybind11==2.10.4
     - pybind11-global==2.10.4
     - setuptools==65.6.3
-prefix: /home/pshakya/.conda/envs/FRAME

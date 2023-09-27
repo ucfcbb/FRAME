@@ -76,6 +76,6 @@ There are some optional arguments that can be used with FRAME.
 |`--c` | Chromsome number. When specified, only this chromsome file is evaluated | Only autosomes, i.e. [1,22] |
 
 
-## Author ##
-- Pramesh Shakya, Email: pramesh.shakya@ucf.edu
+## Contact ##
+- Author :Pramesh Shakya (pramesh.shakya@ucf.edu)
 
