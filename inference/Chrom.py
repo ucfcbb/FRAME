@@ -42,7 +42,7 @@ class Chrom:
         # setup weights dir
         weight_dir = os.path.join(output_folder, 'weights')
         if not os.path.exists(weight_dir):
-            os.mkdirs(weight_dir)
+            os.mkdir(weight_dir)
 
         self.interm_output_path = os.path.join(
             weight_dir, self.chrom_num + '-interm-ancestry-result-faster.json')
