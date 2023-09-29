@@ -28,7 +28,7 @@ def main():
                         required=True,
                         help="length of IBD matches (in sites)")
 
-    parser.add_argument("-p",
+    parser.add_argument("-r",
                         "--refpop",
                         required=True,
                         help="reference population file")

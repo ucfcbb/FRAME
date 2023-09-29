@@ -49,7 +49,7 @@ To run FRAME, you **MUST** provide the following parameters:
 |`--i` | Input directory that contains the VCF files for both query and reference panel (default). When using precomputed matches(`--precomputed` flag should be used in this case), this is the directory of matches for each chromosome. | The VCF and precomputed match filename MUST start with the chromosome number. E.g. 1.query.vcf, 1.ref.vcf, 1.matches|
 |`--l` | Length of the matches (in sites)| N/A |
 |`--r` | Reference population file consisting of two columns| First column is the reference sample name and second column is the population label the sample belongs to. The two columns are tab separated|
-|`--q` | Query sample file. | This file contains query sample IDs. One sample ID per line |
+|`--s` | Query sample file. | This file contains query sample IDs. One sample ID per line |
 |`--n` | Number of sites per chromosome file. This file consists of two columns. | First column is the chromosome number and the second column is the number of variant sites in the VCF file pertaining to this chromosome. The columns are tab separated. |
 |`--o` | Output directory to store intermediate results and the estimated ancestry proportions| N/A |
 
@@ -59,7 +59,7 @@ python path/to/FRAME/run.py \
     --i ../data/vcf/ \
     --l 20 \
     --r ../data/ref.pop \
-    --q ../data/query.sample \
+    --s ../data/query.sample \
     --n ../data/sites.per.chrom \
     --o ../data/results \
 ```
