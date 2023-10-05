@@ -77,5 +77,5 @@ There are some optional arguments that can be used with FRAME.
 
 
 ## Contact ##
-- Author :Pramesh Shakya (pramesh.shakya@ucf.edu)
+- Contact Author: Pramesh Shakya (pramesh.shakya@ucf.edu)
 
